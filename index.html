@@ -3,21 +3,50 @@
 </head>
 
 <body>
-    <div>        
+    <div>
         <input type="file" id="fileInput">
         <span id="fileNameElement"></span>
     </div>
     <div id="plotElement"></div>
     <script>
         const input = document.getElementById('fileInput');
-        input.addEventListener('change', function(event) {
+        input.addEventListener('change', function (event) {
             const file = event.target.files[0];
-            Plotly.newPlot("plotElement", /* JSON object */ {
-                "data": [{ "y": [1, 2, 3] }],
-                "layout": { "width": 600, "height": 400 }
+            loadCSVFile(file, function (data) {
+                Plotly.newPlot("plotElement", /* JSON object */ {
+                    "data": [{ "y": [1, 2, 3] }],
+                    "layout": { "width": 600, "height": 400 }
+                })
             })
         })
 
+
+        function parseCSV(csvData) {
+            const lines = csvData.split('\n');
+            const headers = lines[0].split(',');
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',');
+                const row = {};
+                for (let j = 0; j < headers.length; j++) {
+                    row[headers[j]] = values[j];
+                }
+                data.push(row);
+            }
+            return data;
+        }
+
+
+        function loadCSVFile(file, callback) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const csvData = event.target.result;
+                const parsedData = parseCSV(csvData);
+                callback(parsedData);
+            };
+            reader.readAsText(file);
+        }
 
     </script>
 </body>
