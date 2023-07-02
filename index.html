@@ -12,14 +12,16 @@
         const input = document.getElementById('fileInput');
         input.addEventListener('change', function (event) {
             const file = event.target.files[0];
-            loadCSVFile(file, function (data) {
-                Plotly.newPlot("plotElement", /* JSON object */ {
-                    "data": [{ "y": [1, 2, 3] }],
-                    "layout": { "width": 600, "height": 400 }
-                })
-            })
+            loadCSVFile(file, render)
         })
 
+        function render(data) {
+            console.log(data);
+            Plotly.newPlot("plotElement", /* JSON object */ {
+                "data": [{ "y": [1, 2, 3] }],
+                "layout": { "width": 600, "height": 400 }
+            })
+        }
 
         function parseCSV(csvData) {
             const lines = csvData.split('\n');
