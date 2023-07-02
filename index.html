@@ -10,10 +10,8 @@
     <div id="plotElement"></div>
     <script>
         const input = document.getElementById('fileInput');
-        const fileNameElement = document.getElementById('fileNameElement');
         input.addEventListener('change', function(event) {
             const file = event.target.files[0];
-            fileNameElement.textContent = file.name;
             Plotly.newPlot("plotElement", /* JSON object */ {
                 "data": [{ "y": [1, 2, 3] }],
                 "layout": { "width": 600, "height": 400 }
