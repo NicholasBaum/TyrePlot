@@ -31,7 +31,7 @@
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',');
                 const row = {};
-                for (let j = 0; j < headers.length; j++) {
+                for (let j = 0; j < headers.length - 1; j++) {
                     row[headers[j]] = values[j];
                 }
                 data.push(row);
