@@ -27,6 +27,19 @@
     <script>
 
         let channels;
+        let baseUrl;
+        const repositoryOwner = 'NicholasBaum';
+        const repositoryName = 'TyrePlot';
+        let branchName = 'gh-pages';
+        const subfolderPath = 'data';
+
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            baseUrl = './';
+            branchName = '';
+        } else {
+            baseUrl = `https://api.github.com/repos/${repositoryOwner}/${repositoryName}/contents/`;
+        }
+
         const input = document.getElementById('fileInput');
         const cb = document.getElementById('channelComboBox');
 
@@ -43,6 +56,7 @@
         })
 
         loadData();
+        getFiles();
 
         // functions
 
@@ -105,6 +119,49 @@
                 callback(parsedData);
             };
             reader.readAsText(file);
+        }
+
+        fetchCsvPaths(subfolderPath)
+            .then(csvPaths => {
+                const jsonResult = JSON.stringify(csvPaths);
+                console.log('CSV file paths:', jsonResult);
+                // Process the JSON result as needed
+            })
+            .catch(error => {
+                console.error('Error fetching repository contents:', error);
+            });
+
+        function getFiles() {
+            fetchCsvPaths(subfolderPath, branchName)
+                .then(csvPaths => {
+                    const jsonResult = JSON.stringify(csvPaths);
+                    console.log('CSV file paths:', jsonResult);
+                    // Process the JSON result as needed
+                })
+                .catch(error => {
+                    console.error('Error fetching repository contents:', error);
+                });
+        }
+
+        function fetchCsvPaths(folderPath) {
+            const url = branchName == '' ? `${baseUrl}${folderPath}` : `${baseUrl}${folderPath}?ref=${branchName}`;
+            return fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const csvFiles = data.filter(file => file.type === 'file' && file.name.endsWith('.csv'));
+                    const csvPaths = csvFiles.map(file => file.path);
+
+                    const subfolders = data.filter(file => file.type === 'dir');
+                    const subfolderPromises = subfolders.map(subfolder => fetchCsvPaths(`${folderPath}/${subfolder.name}`, branchName));
+
+                    return Promise.all(subfolderPromises)
+                        .then(results => {
+                            results.forEach(subfolderCsvPaths => {
+                                csvPaths.push(...subfolderCsvPaths);
+                            });
+                            return csvPaths;
+                        });
+                });
         }
 
     </script>
