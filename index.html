@@ -32,7 +32,7 @@
         // functions
 
         function loadData() {
-            const path = '';
+            const path = '/data/events/imola_2023/T2303_IMO_%2329/D1PMRun1/Tr491_Abs00006148_CAR 29_Lap0_cableData.csv';
             fetch(path).then(r => r.text())
                 .then(csv => parseCSV(csv))
                 .then(data = channels = data)
@@ -47,7 +47,7 @@
         }
 
         function fillComboBox() {
-            cb.innerHTML = '/data/events/imola_2023/T2303_IMO_%2329/D1PMRun1/Tr491_Abs00006148_CAR 29_Lap0_cableData.csv';
+            cb.innerHTML = '';
             Object.keys(channels).forEach(function (key) {
                 console.log(key)
                 const opt = document.createElement('option');
