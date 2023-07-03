@@ -9,12 +9,12 @@
     </div>
     <div id="plotElement"></div>
     <script>
-        let data = [];
+        let channels;
         const input = document.getElementById('fileInput');
         const cb = document.getElementById('channelComboBox');
         input.addEventListener('change', function (event) {
             const file = event.target.files[0];
-            loadCSVFile(file, function (data) { data = data })
+            loadCSVFile(file, function (data) { channels = data })
             fillComboBox();
         })
         cb.addEventListener('change', function (event) {
@@ -24,14 +24,14 @@
 
         function render(channel) {
             Plotly.newPlot("plotElement", /* JSON object */ {
-                "data": [{ "y": data[channel] }],
+                "data": [{ "y": channels[channel] }],
                 "layout": { "width": 600, "height": 400 }
             })
         }
 
         function fillComboBox() {
             cb.innerHTML = '';
-            Object.keys(data).forEach(function (key) {
+            Object.keys(channels).forEach(function (key) {
                 const opt = document.createElement('option');
                 opt.text = key;
                 opt.value = key;
