@@ -14,6 +14,7 @@
         input.addEventListener('change', function (event) {
             const file = event.target.files[0];
             loadCSVFile(file, function (data) { data = data })
+            fillComboBox();
         })
 
         function render(channel) {
@@ -23,7 +24,7 @@
             })
         }
 
-        function fillComboBox(data) {
+        function fillComboBox() {
             const cb = document.getElementById('channelComboBox');
             cb.innerHTML = '';
             Object.keys(data).forEach(function (key) {
