@@ -18,7 +18,7 @@
         function render(data) {
             console.log(data);
             Plotly.newPlot("plotElement", /* JSON object */ {
-                "data": [{ "y": [1, 2, 3] }],
+                "data": [{ "y": data['pTyre_RR'] }],
                 "layout": { "width": 600, "height": 400 }
             })
         }
@@ -35,7 +35,11 @@
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',');
                 for (let j = 0; j < values.length - 1; j++) {
-                    data[headers[j]][i - 1] = values[j];
+                    if (j == 0) {
+                        data[headers[j]][i - 1] = values[j];
+                        continue;
+                    }
+                    data[headers[j]][i - 1] = parseFloat(values[j]);
                 }
             }
             return data;
