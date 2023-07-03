@@ -36,7 +36,10 @@
             const path = './test.csv';
             fetch(path).then(r => r.text())
                 .then(csv => parseCSV(csv))
-                .then(data => channels = data)
+                .then(data => {
+                    channels = data;
+                    fillComboBox();
+                })
                 .catch(err => console.log(err));
         }
 
