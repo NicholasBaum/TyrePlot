@@ -5,7 +5,7 @@
 <body>
     <div>
         <input type="file" id="fileInput">
-        <span id="fileNameElement"></span>
+        <select id="channelComboBox"></select>
     </div>
     <div id="plotElement"></div>
     <script>
@@ -15,11 +15,23 @@
             loadCSVFile(file, render)
         })
 
-        function render(data) {
-            console.log(data);
+        function render(data, channel) {
             Plotly.newPlot("plotElement", /* JSON object */ {
-                "data": [{ "y": data['TTyre_RR'] }],
+                "data": [{ "y": data[channel] }],
                 "layout": { "width": 600, "height": 400 }
+            })
+        }
+
+        function fillComboBox(data) {
+            const cb = document.getElementById('channelComboBox');
+            Object.keys(data).forEach(function (key) {
+                const opt = document.createElement('option');
+                opt.text = key;
+                opt.value = key;
+                cb.appendChild(opt);
+            });
+            cb.addEventListener('change', function (event) {
+                render(data, event.target.value)
             })
         }
 
