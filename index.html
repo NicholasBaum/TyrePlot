@@ -31,7 +31,9 @@
 
         function fillComboBox() {
             cb.innerHTML = '';
+            console.log('filling combo box')
             Object.keys(channels).forEach(function (key) {
+                console.log(key)
                 const opt = document.createElement('option');
                 opt.text = key;
                 opt.value = key;
