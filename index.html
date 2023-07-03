@@ -2,6 +2,7 @@
     <script src="https://cdn.plot.ly/plotly-2.24.2.min.js" charset="utf-8"></script>
 </head>
 <!-- https://nicholasbaum.github.io/TyrePlot/ -->
+
 <body>
     <div>
         <input type="file" id="fileInput">
@@ -9,21 +10,34 @@
     </div>
     <div id="plotElement"></div>
     <script>
+
         let channels;
         const input = document.getElementById('fileInput');
         const cb = document.getElementById('channelComboBox');
+
         input.addEventListener('change', function (event) {
             const file = event.target.files[0];
             loadCSVFile(file, function (data) {
                 channels = data;
                 fillComboBox();
             })
-
         })
+
         cb.addEventListener('change', function (event) {
             render(event.target.value)
         })
 
+        loadData();
+
+        // functions
+
+        function loadData() {
+            const path = '';
+            fetch(path).then(r => r.text())
+                .then(csv => parseCSV(csv))
+                .then(data = channels = data)
+                .catch(err => console.log(err));
+        }
 
         function render(channel) {
             Plotly.newPlot("plotElement", /* JSON object */ {
@@ -33,8 +47,7 @@
         }
 
         function fillComboBox() {
-            cb.innerHTML = '';
-            console.log('filling combo box')
+            cb.innerHTML = '/data/events/imola_2023/T2303_IMO_%2329/D1PMRun1/Tr491_Abs00006148_CAR 29_Lap0_cableData.csv';
             Object.keys(channels).forEach(function (key) {
                 console.log(key)
                 const opt = document.createElement('option');
