@@ -11,11 +11,16 @@
     <script>
         let data = [];
         const input = document.getElementById('fileInput');
+        const cb = document.getElementById('channelComboBox');
         input.addEventListener('change', function (event) {
             const file = event.target.files[0];
             loadCSVFile(file, function (data) { data = data })
             fillComboBox();
         })
+        cb.addEventListener('change', function (event) {
+            render(event.target.value)
+        })
+
 
         function render(channel) {
             Plotly.newPlot("plotElement", /* JSON object */ {
@@ -25,7 +30,6 @@
         }
 
         function fillComboBox() {
-            const cb = document.getElementById('channelComboBox');
             cb.innerHTML = '';
             Object.keys(data).forEach(function (key) {
                 const opt = document.createElement('option');
@@ -33,10 +37,6 @@
                 opt.value = key;
                 cb.appendChild(opt);
             });
-            cb.removeEventListener('change',)
-            cb.addEventListener('change', function (event) {
-                render(data, event.target.value)
-            })
         }
 
         function parseCSV(csvData) {
