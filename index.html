@@ -32,7 +32,8 @@
         // functions
 
         function loadData() {
-            const path = './data/events/imola_2023/T2303_IMO_%2329/D1PMRun1/Tr491_Abs00006148_CAR 29_Lap0_cableData.csv';
+            //const path = './data/events/imola_2023/T2303_IMO_%2329/D1PMRun1/Tr491_Abs00006148_CAR 29_Lap0_cableData.csv';
+            const path = './test.csv';
             fetch(path).then(r => r.text())
                 .then(csv => parseCSV(csv))
                 .then(data = channels = data)
