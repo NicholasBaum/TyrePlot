@@ -1,4 +1,4 @@
-const token = '';
+const token = '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';
 
 function getCsv(url) {
     return fetch(url, {
