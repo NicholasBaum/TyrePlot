@@ -42,17 +42,27 @@
     </div>
 
     <script>
+        let apiToken = null;
         let plotter = new Plotter();
         let ui;
         let files;
 
-        getFileDescriptions()
-            .then(x => {
-                files = x;
-                ui = new UI(plotter, files);
-                ui.initialize();
-            })
-            .catch(error => console.error("Error:", error));
+        (async () => {
+            const response = await fetch('environment');
+            if (!response.ok) {
+                throw new Error("Couldn't load api key");
+            }
+            apiToken = await response.text();
+
+            getFileDescriptions()
+                .then(x => {
+                    files = x;
+                    ui = new UI(plotter, files);
+                    ui.initialize();
+                })
+                .catch(error => console.error("Error:", error));
+        })();
+
 
     </script>
 </body>

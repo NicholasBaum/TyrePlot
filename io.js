@@ -1,9 +1,7 @@
-const token = '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';
-
 function getCsv(url) {
     return fetch(url, {
         headers: {
-            Authorization: `token ${token}`
+            Authorization: `token ${apiToken}`
         }
     })
         .then(x => {
@@ -44,7 +42,7 @@ function getFileDescriptions() {
 
     return fetch(url, {
         headers: {
-            Authorization: `token ${token}`
+            Authorization: `token ${apiToken}`
         }
     })
         .then(x => {
