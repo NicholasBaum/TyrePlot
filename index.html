@@ -49,8 +49,10 @@
 
         (async () => {
             const response = await fetch('environment');
-            if (response.ok)
+            if (response.ok) {
+                console.log("Using authkey.");
                 apiToken = await response.text();
+            }
 
             getFileDescriptions()
                 .then(x => {
