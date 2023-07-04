@@ -1,7 +1,7 @@
 function getCsv(url) {
     return fetch(url, {
         headers: {
-            Authorization: `token ${apiToken}`
+            Authorization: apiToken ? `token ${apiToken}` : undefined
         }
     })
         .then(x => {
@@ -42,7 +42,7 @@ function getFileDescriptions() {
 
     return fetch(url, {
         headers: {
-            Authorization: `token ${apiToken}`
+            Authorization: apiToken ? `token ${apiToken}` : undefined
         }
     })
         .then(x => {

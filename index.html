@@ -49,10 +49,8 @@
 
         (async () => {
             const response = await fetch('environment');
-            if (!response.ok) {
-                throw new Error("Couldn't load api key");
-            }
-            apiToken = await response.text();
+            if (response.ok)
+                apiToken = await response.text();
 
             getFileDescriptions()
                 .then(x => {
