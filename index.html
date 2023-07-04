@@ -18,74 +18,112 @@
 
     <div class="container">
         <div class="mb-3">
-            <input class="form-control" type="file" id="fileInput">
-            <select class="form-select" id="channelComboBox"></select>
+            <select class="form-select" id="cbCar"></select>
+            <select class="form-select" id="cbRun"></select>
+            <select class="form-select" id="cbFile"></select>
         </div>
+        <div id="channelSelection"></div>
         <div id="plotElement"></div>
     </div>
 
     <script>
+        let files;
+        let currentFile;
+        initialize();
 
-        let channels;
-        let baseUrl;
-        const repositoryOwner = 'NicholasBaum';
-        const repositoryName = 'TyrePlot';
-        let branchName = 'gh-pages';
-        const subfolderPath = 'data';
-
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            baseUrl = './';
-            branchName = '';
-        } else {
-            baseUrl = `https://api.github.com/repos/${repositoryOwner}/${repositoryName}/contents/`;
-        }
-
-        const input = document.getElementById('fileInput');
-        const cb = document.getElementById('channelComboBox');
-
-        input.addEventListener('change', function (event) {
-            const file = event.target.files[0];
-            loadCSVFile(file, function (data) {
-                channels = data;
-                fillComboBox();
-            })
-        })
-
-        cb.addEventListener('change', function (event) {
-            render(event.target.value)
-        })
-
-        loadData();
-        getFiles();
 
         // functions
 
-        function loadData() {
-            const path = './data/events/imola_2023/T2303_IMO_%2329/D1PMRun1/Tr491_Abs00006148_CAR 29_Lap0_cableData.csv';
-            fetch(path).then(r => r.text())
-                .then(csv => parseCSV(csv))
+        function initialize() {
+            getFileDescriptions()
                 .then(data => {
-                    channels = data;
-                    fillComboBox();
-                })
-                .catch(err => console.log(err));
+                    files = data;
+                    populateSelections()
+                });
+        }
+
+        function populateSelections() {
+            const cbCar = document.getElementById('cbCar');
+            const cbRun = document.getElementById('cbRun');
+            const cbFile = document.getElementById('cbFile');
+
+            cbCar.addEventListener('change', event => {
+                fillComboBox(cbRun, files.events.imola_2023[event.target.value]);
+            })
+            cbRun.addEventListener('change', event => {
+                fillComboBox(cbFile, files.events.imola_2023[cbCar.value][event.target.value]);
+            })
+            cbFile.addEventListener('change', event => {
+                const file = files.events.imola_2023[cbCar.value][cbRun.value][event.target.value];
+                if (file.channels !== null) {
+                    currentFile = file;
+                    createChannelSelectionUI();
+                }
+                else {
+                    getCsv(file.url).then(x => {
+                        file.channels = x;
+                        currentFile = file;
+                        createChannelSelectionUI();
+                    })
+                }
+            })
+
+            fillComboBox(cbCar, files.events.imola_2023);
+        }
+
+        function createChannelSelectionUI() {
+            const el = document.getElementById('channelSelection');
+            el.innerHTML = '';
+            const ul = document.createElement('ul');
+            console.log(currentFile);
+            Object.keys(currentFile.channels).forEach(key => {
+                const li = document.createElement('li');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = key;
+                checkbox.value = key;
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        render(currentFile.channels[this.value])
+                    } else {
+                        console.log('Checkbox unchecked:', this.value);
+                    }
+                });
+                const label = document.createElement(key);
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(key));
+                li.appendChild(label);
+                ul.appendChild(li);
+            });
+
+            el.appendChild(ul);
+        }
+
+        function fillComboBox(comboBox, json) {
+            comboBox.innerHTML = '';
+            Object.keys(json).forEach(key => {
+                const opt = document.createElement('option');
+                opt.text = key;
+                opt.value = key;
+                comboBox.appendChild(opt);
+            });
+            // trigger a refreh
+            comboBox.dispatchEvent(new Event("change"));
         }
 
         function render(channel) {
             Plotly.newPlot("plotElement", /* JSON object */ {
-                "data": [{ "y": channels[channel] }],
+                "data": [{ "y": channel }],
                 "layout": { "width": 600, "height": 400 }
             })
         }
 
-        function fillComboBox() {
-            cb.innerHTML = '';
-            Object.keys(channels).forEach(function (key) {
-                const opt = document.createElement('option');
-                opt.text = key;
-                opt.value = key;
-                cb.appendChild(opt);
-            });
+        function getCsv(url) {
+            return fetch(url)
+                .then(x => x.json())
+                .then(x => atob(x.content))
+                .then(csv => parseCSV(csv))
+                .catch(err => console.log(err));
         }
 
         function parseCSV(csvData) {
@@ -110,59 +148,48 @@
             return data;
         }
 
+        function getFileDescriptions() {
+            const url = "https://api.github.com/repos/NicholasBaum/TyrePlot/git/trees/gh-pages?recursive=1";
 
-        function loadCSVFile(file, callback) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const csvData = event.target.result;
-                const parsedData = parseCSV(csvData);
-                callback(parsedData);
-            };
-            reader.readAsText(file);
-        }
-
-        fetchCsvPaths(subfolderPath)
-            .then(csvPaths => {
-                const jsonResult = JSON.stringify(csvPaths);
-                console.log('CSV file paths:', jsonResult);
-                // Process the JSON result as needed
-            })
-            .catch(error => {
-                console.error('Error fetching repository contents:', error);
-            });
-
-        function getFiles() {
-            fetchCsvPaths(subfolderPath, branchName)
-                .then(csvPaths => {
-                    const jsonResult = JSON.stringify(csvPaths);
-                    console.log('CSV file paths:', jsonResult);
-                    // Process the JSON result as needed
-                })
-                .catch(error => {
-                    console.error('Error fetching repository contents:', error);
-                });
-        }
-
-        function fetchCsvPaths(folderPath) {
-            const url = branchName == '' ? `${baseUrl}${folderPath}` : `${baseUrl}${folderPath}?ref=${branchName}`;
             return fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    const csvFiles = data.filter(file => file.type === 'file' && file.name.endsWith('.csv'));
-                    const csvPaths = csvFiles.map(file => file.path);
+                    // Filter the response to include only CSV files
+                    const csvFiles = data.tree.filter(file => file.path.endsWith('.csv'));
 
-                    const subfolders = data.filter(file => file.type === 'dir');
-                    const subfolderPromises = subfolders.map(subfolder => fetchCsvPaths(`${folderPath}/${subfolder.name}`, branchName));
+                    // Function to create nested JSON
+                    const createNestedJson = (path, value) => {
+                        const keys = path.split('/').slice(1); // Exclude the first level
+                        const filename = keys.pop(); // Remove the filename from the path
+                        let currentLevel = nestedJson;
 
-                    return Promise.all(subfolderPromises)
-                        .then(results => {
-                            results.forEach(subfolderCsvPaths => {
-                                csvPaths.push(...subfolderCsvPaths);
-                            });
-                            return csvPaths;
+                        // Create nested directories if they don't exist
+                        keys.forEach(key => {
+                            if (!currentLevel[key]) {
+                                currentLevel[key] = {};
+                            }
+                            currentLevel = currentLevel[key];
                         });
-                });
+
+                        currentLevel[filename] = { 'name': filename, 'url': value, 'channels': null }
+                    };
+
+                    // Create nested JSON structure for CSV files
+                    const nestedJson = {};
+                    csvFiles.forEach(file => {
+                        const { path, url } = file;
+                        createNestedJson(path, url);
+                    });
+
+                    // Print the resulting nested JSON
+                    //console.log(JSON.stringify(nestedJson, null, 4));
+                    return nestedJson;
+                })
+                .catch(error => console.error("Error:", error));
+
         }
+
+
 
     </script>
 </body>
