@@ -36,10 +36,7 @@ jobs:
         run: |
           echo ${{secrets.REP_API_KEY}} > environment.txt
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          name: environment
-          path: environment.txt
+        uses: actions/upload-pages-artifact@v1  
 
   # Deployment job
   deploy:
