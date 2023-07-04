@@ -37,10 +37,12 @@ class UI {
         const el = document.getElementById('channelSelection');
         el.innerHTML = '';
         const ul = document.createElement('ul');
-
+        ul.classList.add('list-group');
         Object.keys(this.currentFile.channels).forEach(key => {
             const li = document.createElement('li');
+            li.classList.add('list-group-item');
             const checkbox = document.createElement('input');
+            checkbox.classList.add('form-check-input', 'me-1');
             checkbox.type = 'checkbox';
             checkbox.name = key;
             checkbox.value = key;
@@ -51,10 +53,8 @@ class UI {
                     console.log('Checkbox unchecked:', checkbox.value);
                 }
             });
-            const label = document.createElement(key);
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(key));
-            li.appendChild(label);
+            li.appendChild(checkbox);
+            li.appendChild(document.createTextNode(key));
             ul.appendChild(li);
         });
 
