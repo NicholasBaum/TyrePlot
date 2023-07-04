@@ -37,7 +37,7 @@ jobs:
       - name: Create environment
         run: |
           echo ${{secrets.REP_API_KEY}} > environment.txt
-          cp environment.txt _site/
+          cp environment.txt ./_site/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
