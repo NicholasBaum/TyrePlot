@@ -19,13 +19,13 @@ class UI {
             const file = files.events.imola_2023[cbCar.value][cbRun.value][event.target.value];
             if (file.channels !== null) {
                 this.currentFile = file;
-                this.createChannelSelectionUI();
+                this.createAddChannelUI();
             }
             else {
                 getCsv(file.url).then(x => {
                     file.channels = x;
                     this.currentFile = file;
-                    this.createChannelSelectionUI();
+                    this.createAddChannelUI();
                 })
             }
         })
@@ -33,7 +33,7 @@ class UI {
         this.fillComboBox(cbCar, files.events.imola_2023);
     }
 
-    createChannelSelectionUI() {
+    createAddChannelUI() {
         const el = document.getElementById('channelSelection');
         el.innerHTML = '';
         const ul = document.createElement('ul');
@@ -48,7 +48,7 @@ class UI {
             checkbox.value = key;
             checkbox.addEventListener('change', () => {
                 if (checkbox.checked) {
-                    this.plotter.drawLine(new LineData(checkbox.value, this.currentFile.channels[checkbox.value]));
+                    this.plotter.drawLine(new LineData(checkbox.value, checkbox.value, this.currentFile.channels[checkbox.value]));
                 } else {
                     console.log('Checkbox unchecked:', checkbox.value);
                 }
