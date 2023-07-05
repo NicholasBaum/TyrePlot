@@ -36,7 +36,7 @@ jobs:
       - name: Copy Secrets
         run: |
           echo ${{secrets.REP_API_KEY}} > env.txt
-          shell: bash
+        shell: bash
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
