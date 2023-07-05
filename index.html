@@ -47,7 +47,7 @@
         let files;
 
         (async () => {
-            const response = await fetch('environment');
+            const response = await fetch('env.txt');
             if (response.ok) {
                 console.log("Using authkey.");
                 apiToken = await response.text();
