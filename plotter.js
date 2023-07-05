@@ -1,10 +1,21 @@
+
+class ColorsUtil {
+    currentColorIndex = 0;
+    colorPalette = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
+    getNextColor() {
+        return this.colorPalette[this.currentColorIndex++ % this.colorPalette.length]
+    }
+}
+COLOR_PALETTE = new ColorsUtil();
+
 class LineData {
-    constructor(id, name, yData) {
+    constructor(id, name, time, yData) {
         this.id = id;
         this.name = name;
+        this.time = time;
         this.yData = yData;
         this.visible = true;
-        this.color = null;
+        this.color = COLOR_PALETTE.getNextColor();
     }
 }
 
@@ -55,8 +66,8 @@ class Plotter {
                 if (x.color === null)
                     x.color = this.getNextColor();
                 return {
-                    // type: 'scatter',
-                    // x: [1, 2, 3, 4],
+                    type: 'line',
+                    x: x.time,
                     y: x.yData,
                     // mode: 'lines',
                     name: x.name,
@@ -74,10 +85,5 @@ class Plotter {
 
         Plotly.newPlot("plotElement", { data, layout });
     }
-
-    currentColorIndex = 0;
-    colorPalette = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
-    getNextColor() {
-        return this.colorPalette[this.currentColorIndex++ % this.colorPalette.length]
-    }
 }
+

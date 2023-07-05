@@ -28,10 +28,12 @@ function parseCSV(csvData) {
         const values = lines[i].split(',');
         for (let j = 0; j < values.length - 1; j++) {
             if (j == 0) {
-                data[headers[j]][i - 1] = values[j];
-                continue;
+                const [seconds, centisecond] = values[j].split(":").map(Number); // e.g. 112:52
+                data[headers[j]][i - 1] = seconds + centisecond / 100;
             }
-            data[headers[j]][i - 1] = parseFloat(values[j]);
+            else {
+                data[headers[j]][i - 1] = parseFloat(values[j]);
+            }
         }
     }
     return data;

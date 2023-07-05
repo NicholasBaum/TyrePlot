@@ -48,7 +48,7 @@ class UI {
             checkbox.value = key;
             checkbox.addEventListener('change', () => {
                 if (checkbox.checked) {
-                    this.plotter.drawLine(new LineData(checkbox.value, checkbox.value, this.currentFile.channels[checkbox.value]));
+                    this.plotter.drawLine(new LineData(checkbox.value, checkbox.value, this.currentFile.channels['Time'], this.currentFile.channels[checkbox.value]));
                 } else {
                     console.log('Checkbox unchecked:', checkbox.value);
                 }
