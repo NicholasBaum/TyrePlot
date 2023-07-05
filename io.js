@@ -1,15 +1,7 @@
+USE_AUTH_TOKEN = true;
+
 function getCsv(url) {
-    return fetch(url, {
-        headers: {
-            Authorization: apiToken ? `token ${apiToken}` : undefined
-        }
-    })
-        .then(x => {
-            if (!x.ok) {
-                throw new Error("HTTP error, status = " + x.status);
-            }
-            return x;
-        })
+    return fetchWithRetry(url, apiToken)
         .then(x => x.json())
         .then(x => atob(x.content))
         .then(csv => parseCSV(csv));
@@ -42,17 +34,7 @@ function parseCSV(csvData) {
 function getFileDescriptions() {
     const url = "https://api.github.com/repos/NicholasBaum/TyrePlot/git/trees/gh-pages?recursive=1";
 
-    return fetch(url, {
-        headers: {
-            Authorization: apiToken ? `token ${apiToken}` : undefined
-        }
-    })
-        .then(x => {
-            if (!x.ok) {
-                throw new Error("HTTP error, status = " + x.status);
-            }
-            return x;
-        })
+    return fetchWithRetry(url, apiToken)
         .then(response => response.json())
         .then(data => {
             // Filter the response to include only CSV files
@@ -85,5 +67,26 @@ function getFileDescriptions() {
             // Print the resulting nested JSON
             //console.log(JSON.stringify(nestedJson, null, 4));
             return nestedJson;
+        });
+}
+
+function fetchWithRetry(url, authToken, retry = 1) {
+    return fetch(url, {
+        headers: {
+            Authorization: authToken && USE_AUTH_TOKEN ? `token ${authToken}` : undefined
+        }
+    })
+        .then(x => {
+            if (!x.ok) {
+                if (x.status >= 400 && x.status < 500 && retry > 0) {
+                    console.warn("Retrying to fetch data from github without auth token.");
+                    USE_AUTH_TOKEN = false;
+                    return fetchWithRetry(url, undefined, retry - 1);
+                }
+                else {
+                    throw new Error("HTTP error, status = " + x.status);
+                }
+            }
+            return x;
         });
 }

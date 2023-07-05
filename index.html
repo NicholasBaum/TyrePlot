@@ -43,6 +43,7 @@
         </div>
 
         <script>
+            // globals
             let apiToken = null;
             let plotter = new Plotter();
             let ui;
@@ -52,7 +53,6 @@
             (async () => {
                 const response = await fetch('env.txt');
                 if (response.ok) {
-                    console.log("Using authkey.");
                     apiToken = await response.text();
                 }
 
