@@ -4,7 +4,7 @@ name: Build and Deploy
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: [main]
+    branches: [master]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -38,6 +38,10 @@ jobs:
         with:
           # Upload entire repository
           path: '.'
+      - name: Copy Secrets
+        run: |
+          echo ${{secrets.REP_API_KEY}} > env.txt
+        shell: bash
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
