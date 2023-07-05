@@ -38,10 +38,9 @@ jobs:
         with:
           # Upload entire repository
           path: '.'
-      - name: Copy License File
+      - name: Copy Secrets
         run: |
           echo ${{secrets.REP_API_KEY}} > env.txt
-          cp env.txt $GITHUB_WORKSPACE
         shell: bash
       - name: Deploy to GitHub Pages
         id: deployment
