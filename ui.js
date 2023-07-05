@@ -40,21 +40,17 @@ class UI {
         ul.classList.add('list-group');
         Object.keys(this.currentFile.channels).forEach(key => {
             const li = document.createElement('li');
-            li.classList.add('list-group-item');
-            const checkbox = document.createElement('input');
-            checkbox.classList.add('form-check-input', 'me-1');
-            checkbox.type = 'checkbox';
-            checkbox.name = key;
-            checkbox.value = key;
-            checkbox.addEventListener('change', () => {
-                if (checkbox.checked) {
-                    this.plotter.drawLine(new LineData(checkbox.value, checkbox.value, this.currentFile.channels['Time'], this.currentFile.channels[checkbox.value]));
-                } else {
-                    console.log('Checkbox unchecked:', checkbox.value);
-                }
+            li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+            const button = document.createElement('button');
+            button.classList.add('btn', 'btn-primary');
+            const icon = document.createElement('i');
+            icon.classList.add('fas', 'fa-plus');
+            button.appendChild(icon);
+            button.addEventListener('click', () => {
+                this.plotter.drawLine(new LineData(key, key, this.currentFile.channels['Time'], this.currentFile.channels[key]));
             });
-            li.appendChild(checkbox);
             li.appendChild(document.createTextNode(key));
+            li.appendChild(button);
             ul.appendChild(li);
         });
 
