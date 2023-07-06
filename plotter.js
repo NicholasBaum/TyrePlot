@@ -81,6 +81,7 @@ class Plotter {
                     type: 'line',
                     x: x.time,
                     y: x.yData,
+                    yaxis: `y${x.id + 1}`,
                     // mode: 'lines',
                     //name: `${x.channelName}<br>${x.info}`,
                     name: x.channelName,
@@ -93,7 +94,10 @@ class Plotter {
 
         const layout = {
             "width": w,
-            "height": h
+            "height": h,
+            xaxis: { title: 'time in s', showgrid: false, showline: true, zeroline: false },
+            yaxis: { title: 'y-axis 1', showline: false, zeroline: false, showgrid: false },
+            yaxis2: { title: 'y-axis 2', overlaying: 'y', side: 'right', showgrid: false }
         };
 
         Plotly.newPlot("plotElement", { data, layout });
