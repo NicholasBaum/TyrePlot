@@ -56,7 +56,7 @@
                     apiToken = await response.text();
                 }
 
-                getFileDescriptions()
+                getFileInfos()
                     .then(x => {
                         files = x;
                         ui = new UI(plotter, files);

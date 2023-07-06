@@ -31,7 +31,7 @@ function parseCSV(csvData) {
     return data;
 }
 
-function getFileDescriptions() {
+function getFileInfos() {
     const url = "https://api.github.com/repos/NicholasBaum/TyrePlot/git/trees/gh-pages?recursive=1";
 
     return fetchWithRetry(url, apiToken)
@@ -54,7 +54,7 @@ function getFileDescriptions() {
                     currentLevel = currentLevel[key];
                 });
 
-                currentLevel[filename] = { 'name': filename, 'url': value, 'channels': null }
+                currentLevel[filename] = { 'name': filename, 'path': path, 'url': value, 'channels': null }
             };
 
             // Create nested JSON structure for CSV files

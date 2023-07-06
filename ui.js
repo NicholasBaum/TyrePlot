@@ -19,13 +19,13 @@ class UI {
             const file = files.events.imola_2023[cbCar.value][cbRun.value][event.target.value];
             if (file.channels !== null) {
                 this.currentFile = file;
-                this.createAddChannelUI();
+                this.createAddChannelControl();
             }
             else {
                 getCsv(file.url).then(x => {
                     file.channels = x;
                     this.currentFile = file;
-                    this.createAddChannelUI();
+                    this.createAddChannelControl();
                 })
             }
         })
@@ -33,7 +33,7 @@ class UI {
         this.fillComboBox(cbCar, files.events.imola_2023);
     }
 
-    createAddChannelUI() {
+    createAddChannelControl() {
         const el = document.getElementById('channelSelection');
         el.innerHTML = '';
         const ul = document.createElement('ul');
@@ -47,7 +47,7 @@ class UI {
             icon.classList.add('fas', 'fa-plus');
             button.appendChild(icon);
             button.addEventListener('click', () => {
-                this.plotter.drawLine(new LineData(key, key, this.currentFile.channels['Time'], this.currentFile.channels[key]));
+                this.plotter.drawLine(LineData.create(this.currentFile, key));
             });
             li.appendChild(document.createTextNode(key));
             li.appendChild(button);

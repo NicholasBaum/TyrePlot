@@ -36,7 +36,7 @@ class ChannelList {
             });
 
             const channelName = document.createElement('span');
-            channelName.textContent = channel.name;
+            channelName.textContent = channel.channelName;
 
             channelInfo.appendChild(checkbox);
             channelInfo.appendChild(channelName);
@@ -79,9 +79,13 @@ class ChannelList {
                 this.plotter.render();
             });
 
+            const channelInfoText = document.createElement('p');
+            channelInfoText.textContent = channel.info;
+
             channelSettings.appendChild(colorLabel);
             channelSettings.appendChild(colorInput);
 
+            collapseDiv.appendChild(channelInfoText);
             collapseDiv.appendChild(channelSettings);
 
             listItem.appendChild(itemContent);
@@ -92,4 +96,5 @@ class ChannelList {
 
         container.appendChild(list);
     }
+
 }

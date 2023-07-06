@@ -7,15 +7,27 @@ class ColorsUtil {
     }
 }
 COLOR_PALETTE = new ColorsUtil();
-
+LINE_DATA_ID = 0;
 class LineData {
-    constructor(id, name, time, yData) {
-        this.id = id;
+    constructor(name, channelName, info, time, yData) {
+        this.id = LINE_DATA_ID++;
         this.name = name;
+        this.channelName = channelName;
+        this.info = info;
         this.time = time;
         this.yData = yData;
         this.visible = true;
         this.color = COLOR_PALETTE.getNextColor();
+    }
+
+    static create(file, channelName) {
+        //const input = '/imola_2023/T2303_IMO_#29/D1PMRun1/Tr491_Abs00006148_CAR 29_Lap0_cableData.csv';
+        const carNumber = file.path.match("CAR (\\d+)")[1];
+        const run = file.path.split('/')[4];
+        const trNumber = file.path.match("Abs(\\d+)")[0].slice(-4);
+        const desc = `${carNumber}_${run}_${trNumber}`;
+        const name = `${channelName}@${desc}`;
+        return new LineData(name, channelName, desc, file.channels['Time'], file.channels[channelName])
     }
 }
 
@@ -70,7 +82,8 @@ class Plotter {
                     x: x.time,
                     y: x.yData,
                     // mode: 'lines',
-                    name: x.name,
+                    //name: `${x.channelName}<br>${x.info}`,
+                    name: x.channelName,
                     line: {
                         color: x.color,
                         // width: 3
